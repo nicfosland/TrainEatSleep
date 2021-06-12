@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "98249809874",
+    "project_id": "traineatsleep-fb3e4",
+    "storage_bucket": "traineatsleep-fb3e4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:98249809874:android:94a5aba3e74010d3c7b20b",
+        "android_client_info": {
+          "package_name": "com.fosland.traineatsleep"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "98249809874-56c8og9hetm4cuqtbd3c5cgg4vkf0dil.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fosland.traineatsleep",
+            "certificate_hash": "9affafdfb10ba3b9bbd0dd9be7d7288e1a1fd2fa"
+          }
+        },
+        {
+          "client_id": "98249809874-o34s4ldhldgsfdgpo67gkm06tqpf0vrf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCWUfJAyx2TOqkB9EnGRfklemlHIG7eQIE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "98249809874-o34s4ldhldgsfdgpo67gkm06tqpf0vrf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
