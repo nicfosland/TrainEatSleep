@@ -5,6 +5,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -22,40 +24,50 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.fosland.traineatsleep.LoginActivity.getUserAccount;
 import static com.fosland.traineatsleep.LoginActivity.userAccount;
 
 public class FirstFragment extends Fragment {
+    View view;
+    TextView welcomeMessage;
 
     @Override
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.fragment_first, container, false);
+
+        welcomeMessage = view.findViewById(R.id.textview_first);
 
         //example adding a user to the database.
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         // Create a new user with a first, middle, and last name
         Map<String, Object> user = new HashMap<>();
-        user.put("name", getUserAccount().getDisplayName());
-        user.put("email", getUserAccount().getEmail());
-        user.put("id", getUserAccount().getId());
-        Log.d("FirstFragment", "onCreateView: " +db.collection("users"));
+        if (userAccount != null) {
+            user.put("name", userAccount.getDisplayName());
+            user.put("email", userAccount.getEmail());
+            user.put("id", userAccount.getId());
+
+            welcomeMessage.setText("Welcome, " + userAccount.getDisplayName());
+
+        }
+
+        Log.d("FirstFragment", "onCreateView: " + db.collection("users"));
 
 // Add a new document with a generated ID
-//        db.collection("users")
-//                .add(user)
-//                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-//                    @Override
-//                    public void onSuccess(DocumentReference documentReference) {
-//                        Log.d("addUser", "DocumentSnapshot added with ID: " + documentReference.getId());
-//                    }
-//                })
-//                .addOnFailureListener(new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull Exception e) {
-//                        Log.w("addUser", "Error adding document" + e, e);
-//                    }
-//                });
+        db.collection("users")
+                .add(user)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.d("addUser", "DocumentSnapshot added with ID: " + documentReference.getId());
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("addUser", "Error adding document" + e, e);
+                    }
+                });
         db.collection("users")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -71,7 +83,7 @@ public class FirstFragment extends Fragment {
                     }
                 });
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_first, container, false);
+        return view;
     }
 
 

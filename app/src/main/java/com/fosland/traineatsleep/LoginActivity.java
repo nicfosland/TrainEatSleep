@@ -5,10 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.renderscript.ScriptGroup;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -29,51 +27,41 @@ public class LoginActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 100;
     private GoogleSignInClient mGoogleSignInClient;
     private FirebaseAuth mAuth;
-
-    public static GoogleSignInAccount getUserAccount() {
-        return userAccount;
-    }
-
-    public static void setUserAccount(GoogleSignInAccount userAccount) {
-        LoginActivity.userAccount = userAccount;
-    }
-
     public static GoogleSignInAccount userAccount;
+
+    public void signOutAccount(){
+        mGoogleSignInClient.signOut();
+        mAuth.signOut();
+    }
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
         GoogleSignInOptions gso = new GoogleSignInOptions
                 .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.web_client_id))
                 .requestEmail()
                 .build();
-
-// Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-// Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
         // Check for existing Google Sign In account, if the user is already signed in
 // the GoogleSignInAccount will be non-null.
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-
         try {
             Log.d("LoginActivity", "onCreate: Account signed in :" + account.getDisplayName());
         } catch (NullPointerException ex) {
             Log.d("LoginActivity", "onCreate: No Account signed in currently.");
         }
 
-        // Set the dimensions of the sign-in button.
         SignInButton signInButton = findViewById(R.id.sign_in_button);
         signInButton.setSize(SignInButton.SIZE_WIDE);
-
         findViewById(R.id.sign_in_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (account != null) {
+                if (userAccount == null) {
                     signIn();
                 }
             }
@@ -86,10 +74,12 @@ public class LoginActivity extends AppCompatActivity {
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
+
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-
+            userAccount = account;
+            Log.d("LoginActivity", "handleSignInResult: userID Logged In: " + userAccount.getId());
             // Signed in successfully, show authenticated UI.
 //            updateUI(account);
             firebaseAuthWithGoogle(account.getIdToken());
@@ -106,7 +96,6 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             handleSignInResult(task);
@@ -130,7 +119,6 @@ public class LoginActivity extends AppCompatActivity {
 //                            Snackbar.make(mBinding.mainLayout, "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
 //                            updateUI(null);
                         }
-
                     }
                 });
     }
@@ -138,17 +126,10 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-        if (account != null) {
-            setUserAccount(account);
+        if (userAccount != null) {
             FirebaseUser currentUser = mAuth.getCurrentUser();
             Intent main = new Intent(this, MainActivity.class);
             startActivity(main);
         }
-
-    }
-
-    public GoogleSignInAccount getSignedInUser() {
-        return GoogleSignIn.getLastSignedInAccount(this);
     }
 }
