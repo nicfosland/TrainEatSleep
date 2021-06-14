@@ -14,6 +14,11 @@
         <action
             android:id="@+id/action_FirstFragment_to_SecondFragment"
             app:destination="@id/SecondFragment" />
+        <action
+            android:id="@+id/action_FirstFragment_to_SettingsFragment"
+            app:destination="@id/SettingsFragment"
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:exitAnim="@anim/fragment_fade_exit" />
     </fragment>
     <fragment
         android:id="@+id/SecondFragment"
@@ -24,5 +29,15 @@
         <action
             android:id="@+id/action_SecondFragment_to_FirstFragment"
             app:destination="@id/FirstFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/SettingsFragment"
+        android:name="com.fosland.traineatsleep.SettingsFragment"
+        android:label="SettingsFragment"
+        tools:layout="@layout/fragment_settings">
+        <action
+            android:id="@+id/action_SettingsFragment_pop"
+            app:popUpTo="@id/SettingsFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 </navigation>
