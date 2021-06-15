@@ -19,6 +19,11 @@
             app:destination="@id/SettingsFragment"
             app:enterAnim="@anim/fragment_fade_enter"
             app:exitAnim="@anim/fragment_fade_exit" />
+        <action
+            android:id="@+id/action_FirstFragment_to_WorkoutsFragment"
+            app:destination="@id/WorkoutsFragment"
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:exitAnim="@anim/fragment_fade_exit" />
     </fragment>
     <fragment
         android:id="@+id/SecondFragment"
@@ -38,6 +43,16 @@
         <action
             android:id="@+id/action_SettingsFragment_pop"
             app:popUpTo="@id/SettingsFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/WorkoutsFragment"
+        android:name="com.fosland.traineatsleep.WorkoutsFragment"
+        android:label="WorkoutsFragment"
+        tools:layout="@layout/fragment_workouts">
+        <action
+            android:id="@+id/action_WorkoutsFragment_pop"
+            app:popUpTo="@id/WorkoutsFragment"
             app:popUpToInclusive="true" />
     </fragment>
 </navigation>

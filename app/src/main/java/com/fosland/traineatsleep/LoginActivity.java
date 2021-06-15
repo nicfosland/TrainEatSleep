@@ -21,17 +21,33 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.auth.User;
 
 
 public class LoginActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 100;
     private GoogleSignInClient mGoogleSignInClient;
-    private FirebaseAuth mAuth;
-    public static GoogleSignInAccount userAccount;
+    public static FirebaseAuth mAuth;
 
-    public void signOutAccount(){
-        mGoogleSignInClient.signOut();
-        mAuth.signOut();
+//    private void revokeAccess(GoogleSignInClient googleSignInClient) {
+//        googleSignInClient.revokeAccess()
+//                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<Void> task) {
+//                        Log.d("revokeAccess()", "Access revoked.");
+//                    }
+//                });
+//    }
+
+    public void signOutAccount(GoogleSignInClient googleSignInClient) {
+        googleSignInClient.signOut()
+                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Log.d("signOutAccount()", "Account signed out successfully.");
+//                        revokeAccess(googleSignInClient);
+                    }
+                });
     }
 
 
@@ -50,6 +66,8 @@ public class LoginActivity extends AppCompatActivity {
         // Check for existing Google Sign In account, if the user is already signed in
 // the GoogleSignInAccount will be non-null.
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        UserSingleton.createInstance(mGoogleSignInClient);
+
         try {
             Log.d("LoginActivity", "onCreate: Account signed in :" + account.getDisplayName());
         } catch (NullPointerException ex) {
@@ -61,7 +79,7 @@ public class LoginActivity extends AppCompatActivity {
         findViewById(R.id.sign_in_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (userAccount == null) {
+                if (UserSingleton.getGoogleSignInAccount() == null) {
                     signIn();
                 }
             }
@@ -78,8 +96,8 @@ public class LoginActivity extends AppCompatActivity {
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-            userAccount = account;
-            Log.d("LoginActivity", "handleSignInResult: userID Logged In: " + userAccount.getId());
+            UserSingleton.setGoogleSignInAccount(account);
+            Log.d("LoginActivity", "handleSignInResult: userID Logged In: " + UserSingleton.getGoogleSignInAccount().getId());
             // Signed in successfully, show authenticated UI.
 //            updateUI(account);
             firebaseAuthWithGoogle(account.getIdToken());
@@ -126,10 +144,16 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if (userAccount != null) {
+        if (UserSingleton.getGoogleSignInAccount() != null) {
             FirebaseUser currentUser = mAuth.getCurrentUser();
             Intent main = new Intent(this, MainActivity.class);
             startActivity(main);
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        signOutAccount(UserSingleton.getGoogleSignInClient());
     }
 }

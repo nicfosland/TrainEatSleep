@@ -24,11 +24,10 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.fosland.traineatsleep.LoginActivity.userAccount;
-
 public class FirstFragment extends Fragment {
     View view;
     TextView welcomeMessage;
+
 
     @Override
     public View onCreateView(
@@ -42,12 +41,12 @@ public class FirstFragment extends Fragment {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         // Create a new user with a first, middle, and last name
         Map<String, Object> user = new HashMap<>();
-        if (userAccount != null) {
-            user.put("name", userAccount.getDisplayName());
-            user.put("email", userAccount.getEmail());
-            user.put("id", userAccount.getId());
+        if (UserSingleton.getGoogleSignInAccount() != null) {
+            user.put("name", UserSingleton.getGoogleSignInAccount().getDisplayName());
+            user.put("email", UserSingleton.getGoogleSignInAccount().getEmail());
+            user.put("id", UserSingleton.getGoogleSignInAccount().getId());
 
-            welcomeMessage.setText("Welcome, " + userAccount.getDisplayName());
+            welcomeMessage.setText("Welcome, " + UserSingleton.getGoogleSignInAccount().getDisplayName());
 
         }
 
@@ -95,6 +94,14 @@ public class FirstFragment extends Fragment {
             public void onClick(View view) {
                 NavHostFragment.findNavController(FirstFragment.this)
                         .navigate(R.id.action_FirstFragment_to_SecondFragment);
+            }
+        });
+
+        view.findViewById(R.id.button_workouts).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                NavHostFragment.findNavController(FirstFragment.this)
+                        .navigate(R.id.action_FirstFragment_to_WorkoutsFragment);
             }
         });
     }
