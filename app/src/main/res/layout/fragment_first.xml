@@ -27,7 +27,7 @@
         android:layout_marginEnd="44dp"
         android:layout_marginBottom="22dp"
         android:text="Open Second Fragment"
-        app:layout_constraintBottom_toTopOf="@+id/button_first3"
+        app:layout_constraintBottom_toTopOf="@+id/testAddingToDatabase"
         app:layout_constraintEnd_toStartOf="@+id/button_workouts"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textview_first" />
@@ -44,13 +44,13 @@
         app:layout_constraintTop_toTopOf="@+id/button_first" />
 
     <Button
-        android:id="@+id/button_first3"
+        android:id="@+id/testAddingToDatabase"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="30dp"
         android:layout_marginEnd="44dp"
         android:layout_marginBottom="481dp"
-        android:text="..."
+        android:text="Test"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/button_first4"
         app:layout_constraintStart_toStartOf="parent"
@@ -62,9 +62,9 @@
         android:layout_height="0dp"
         android:layout_marginEnd="37dp"
         android:text="..."
-        app:layout_constraintBottom_toBottomOf="@+id/button_first3"
+        app:layout_constraintBottom_toBottomOf="@+id/testAddingToDatabase"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/button_first3"
-        app:layout_constraintTop_toTopOf="@+id/button_first3" />
+        app:layout_constraintStart_toEndOf="@+id/testAddingToDatabase"
+        app:layout_constraintTop_toTopOf="@+id/testAddingToDatabase" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

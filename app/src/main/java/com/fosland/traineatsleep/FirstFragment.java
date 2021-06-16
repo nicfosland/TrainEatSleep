@@ -27,6 +27,8 @@ import java.util.Map;
 public class FirstFragment extends Fragment {
     View view;
     TextView welcomeMessage;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+
 
 
     @Override
@@ -37,8 +39,6 @@ public class FirstFragment extends Fragment {
 
         welcomeMessage = view.findViewById(R.id.textview_first);
 
-        //example adding a user to the database.
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
         // Create a new user with a first, middle, and last name
         Map<String, Object> user = new HashMap<>();
         if (UserSingleton.getGoogleSignInAccount() != null) {
@@ -64,7 +64,7 @@ public class FirstFragment extends Fragment {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.w("addUser", "Error adding document" + e, e);
+                        Log.d("addUser", "Error adding document" + e, e);
                     }
                 });
         db.collection("users")
@@ -102,6 +102,18 @@ public class FirstFragment extends Fragment {
             public void onClick(View view) {
                 NavHostFragment.findNavController(FirstFragment.this)
                         .navigate(R.id.action_FirstFragment_to_WorkoutsFragment);
+            }
+        });
+
+        view.findViewById(R.id.testAddingToDatabase).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                HashMap<String, Object> newUser = new HashMap<>();
+                newUser.put("Test", "Butts");
+
+                db.collection("users").add(newUser);
+
+
             }
         });
     }

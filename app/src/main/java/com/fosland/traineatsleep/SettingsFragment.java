@@ -1,5 +1,6 @@
 package com.fosland.traineatsleep;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -29,6 +30,9 @@ public class SettingsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 UserSingleton.getGoogleSignInClient().signOut();
+                UserSingleton.setGoogleSignInAccount(null);
+                Intent intent = new Intent(getContext(), LoginActivity.class);
+                startActivity(intent);
             }
         });
 

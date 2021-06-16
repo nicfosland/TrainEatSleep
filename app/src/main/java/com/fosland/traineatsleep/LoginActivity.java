@@ -21,7 +21,6 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.firestore.auth.User;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -65,11 +64,11 @@ public class LoginActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         // Check for existing Google Sign In account, if the user is already signed in
 // the GoogleSignInAccount will be non-null.
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+//        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         UserSingleton.createInstance(mGoogleSignInClient);
 
         try {
-            Log.d("LoginActivity", "onCreate: Account signed in :" + account.getDisplayName());
+            Log.d("LoginActivity", "onCreate: Account signed in :" + UserSingleton.getGoogleSignInAccount().getDisplayName());
         } catch (NullPointerException ex) {
             Log.d("LoginActivity", "onCreate: No Account signed in currently.");
         }
@@ -151,9 +150,9 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        signOutAccount(UserSingleton.getGoogleSignInClient());
-    }
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        signOutAccount(UserSingleton.getGoogleSignInClient());
+//    }
 }

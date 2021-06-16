@@ -16,14 +16,10 @@
             app:destination="@id/SecondFragment" />
         <action
             android:id="@+id/action_FirstFragment_to_SettingsFragment"
-            app:destination="@id/SettingsFragment"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit" />
+            app:destination="@id/SettingsFragment" />
         <action
             android:id="@+id/action_FirstFragment_to_WorkoutsFragment"
-            app:destination="@id/WorkoutsFragment"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit" />
+            app:destination="@id/WorkoutsFragment" />
     </fragment>
     <fragment
         android:id="@+id/SecondFragment"
