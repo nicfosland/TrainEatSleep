@@ -79,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
             navController.navigate(R.id.action_FirstFragment_to_SettingsFragment);
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 }

@@ -21,7 +21,6 @@ public class SettingsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_settings, container, false);
-        // Inflate the layout for this fragment
         loginMessage = view.findViewById(R.id.loginMessage2);
         loginMessage.setText(UserSingleton.getGoogleSignInAccount().getDisplayName());
 
@@ -35,7 +34,6 @@ public class SettingsFragment extends Fragment {
                 startActivity(intent);
             }
         });
-
         return view;
     }
 }

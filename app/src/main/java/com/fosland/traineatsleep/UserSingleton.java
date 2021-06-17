@@ -9,15 +9,15 @@ public class UserSingleton {
     private static GoogleSignInAccount mGoogleSignInAccount;
     private static UserSingleton single_instance = null;
 
-    private UserSingleton(GoogleSignInClient googleSignInClient){
+    private UserSingleton(GoogleSignInClient googleSignInClient) {
         this.mGoogleSignInClient = googleSignInClient;
     }
 
-    public static UserSingleton getInstance(){
+    public static UserSingleton getInstance() {
         return single_instance;
     }
 
-    public static GoogleSignInClient getGoogleSignInClient(){
+    public static GoogleSignInClient getGoogleSignInClient() {
         return mGoogleSignInClient;
     }
 
@@ -29,14 +29,12 @@ public class UserSingleton {
         UserSingleton.mGoogleSignInAccount = mGoogleSignInAccount;
     }
 
-    public static UserSingleton createInstance(GoogleSignInClient googleSignInClient){
-        if(single_instance == null){
+    public static UserSingleton createInstance(GoogleSignInClient googleSignInClient) {
+        if (single_instance == null) {
             single_instance = new UserSingleton(googleSignInClient);
         }
         return single_instance;
     }
-
-
 
 
 }

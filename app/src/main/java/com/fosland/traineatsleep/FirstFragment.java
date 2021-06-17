@@ -5,7 +5,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -21,14 +20,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class FirstFragment extends Fragment {
     View view;
-    TextView welcomeMessage;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
-
 
 
     @Override
@@ -37,54 +35,10 @@ public class FirstFragment extends Fragment {
             Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_first, container, false);
 
-        welcomeMessage = view.findViewById(R.id.textview_first);
-
-        // Create a new user with a first, middle, and last name
-        Map<String, Object> user = new HashMap<>();
-        if (UserSingleton.getGoogleSignInAccount() != null) {
-            user.put("name", UserSingleton.getGoogleSignInAccount().getDisplayName());
-            user.put("email", UserSingleton.getGoogleSignInAccount().getEmail());
-            user.put("id", UserSingleton.getGoogleSignInAccount().getId());
-
-            welcomeMessage.setText("Welcome, " + UserSingleton.getGoogleSignInAccount().getDisplayName());
-
-        }
-
-        Log.d("FirstFragment", "onCreateView: " + db.collection("users"));
-
-// Add a new document with a generated ID
-        db.collection("users")
-                .add(user)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.d("addUser", "DocumentSnapshot added with ID: " + documentReference.getId());
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d("addUser", "Error adding document" + e, e);
-                    }
-                });
-        db.collection("users")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d("checkCollection", document.getId() + " => " + document.getData());
-                            }
-                        } else {
-                            Log.w("checkCollection", "Error getting documents.", task.getException());
-                        }
-                    }
-                });
-        // Inflate the layout for this fragment
+        TextView welcomeMessage = view.findViewById(R.id.textview_first);
+        welcomeMessage.setText("Welcome, " + UserSingleton.getGoogleSignInAccount().getDisplayName());
         return view;
     }
-
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -105,15 +59,29 @@ public class FirstFragment extends Fragment {
             }
         });
 
-        view.findViewById(R.id.testAddingToDatabase).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.testAddWorkout).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                HashMap<String, Object> newUser = new HashMap<>();
-                newUser.put("Test", "Butts");
+                HashMap<String, Object> newWorkout = new HashMap<>();
+                newWorkout.put("id", UserSingleton.getGoogleSignInAccount().getId());
+                db.collection("workout-programs").add(newWorkout);
+            }
+        });
 
-                db.collection("users").add(newUser);
-
-
+        view.findViewById(R.id.testRemoveWorkout).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ArrayList<QueryDocumentSnapshot> workoutList = new ArrayList<>();
+                db.collection("workout-programs")
+                        .whereEqualTo("id", UserSingleton.getGoogleSignInAccount().getId())
+                        .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            db.collection("workout-programs").document(document.getId()).delete();
+                        }
+                    }
+                });
             }
         });
     }

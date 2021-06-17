@@ -21,6 +21,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -28,27 +29,15 @@ public class LoginActivity extends AppCompatActivity {
     private GoogleSignInClient mGoogleSignInClient;
     public static FirebaseAuth mAuth;
 
-//    private void revokeAccess(GoogleSignInClient googleSignInClient) {
-//        googleSignInClient.revokeAccess()
-//                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<Void> task) {
-//                        Log.d("revokeAccess()", "Access revoked.");
-//                    }
-//                });
-//    }
-
     public void signOutAccount(GoogleSignInClient googleSignInClient) {
         googleSignInClient.signOut()
                 .addOnCompleteListener(this, new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         Log.d("signOutAccount()", "Account signed out successfully.");
-//                        revokeAccess(googleSignInClient);
                     }
                 });
     }
-
 
 
     @Override
@@ -62,9 +51,6 @@ public class LoginActivity extends AppCompatActivity {
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         mAuth = FirebaseAuth.getInstance();
-        // Check for existing Google Sign In account, if the user is already signed in
-// the GoogleSignInAccount will be non-null.
-//        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         UserSingleton.createInstance(mGoogleSignInClient);
 
         try {
@@ -83,7 +69,6 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 
     private void signIn() {
@@ -98,7 +83,6 @@ public class LoginActivity extends AppCompatActivity {
             UserSingleton.setGoogleSignInAccount(account);
             Log.d("LoginActivity", "handleSignInResult: userID Logged In: " + UserSingleton.getGoogleSignInAccount().getId());
             // Signed in successfully, show authenticated UI.
-//            updateUI(account);
             firebaseAuthWithGoogle(account.getIdToken());
             Intent switchToMain = new Intent(this, MainActivity.class);
             startActivity(switchToMain);
@@ -106,7 +90,6 @@ public class LoginActivity extends AppCompatActivity {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
             Log.w("LoginActivity", "signInResult:failed code=" + e.getStatusCode());
-//            updateUI(null);
         }
     }
 
@@ -129,12 +112,9 @@ public class LoginActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("LoginActivity", "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-//                            updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("LoginActivity", "signInWithCredential:failure", task.getException());
-//                            Snackbar.make(mBinding.mainLayout, "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
-//                            updateUI(null);
                         }
                     }
                 });
@@ -149,10 +129,4 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(main);
         }
     }
-
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        signOutAccount(UserSingleton.getGoogleSignInClient());
-//    }
 }
