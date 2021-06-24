@@ -12,9 +12,12 @@ import androidx.gridlayout.widget.GridLayout;
 import androidx.fragment.app.Fragment;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -39,10 +42,27 @@ public class WorkoutsFragment extends Fragment {
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     gridLayout.addView(makeWorkoutButton(document));
                 }
+                gridLayout.addView(newWorkoutButton());
             }
         });
 
         return view;
+    }
+
+    private Button newWorkoutButton() {
+        Button newButton = new Button(gridLayout.getContext());
+        newButton.setWidth(gridLayout.getWidth() / 3);
+        newButton.setHeight(gridLayout.getWidth() / 3);
+        newButton.setText("+");
+        newButton.setHighlightColor(Color.RED);
+        newButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NavHostFragment.findNavController(WorkoutsFragment.this)
+                        .navigate(R.id.action_WorkoutsFragment_to_CreateWorkoutFragment);
+            }
+        });
+        return newButton;
     }
 
     private Button makeWorkoutButton(QueryDocumentSnapshot documentSnapshot) {
@@ -52,4 +72,5 @@ public class WorkoutsFragment extends Fragment {
         newButton.setHighlightColor(Color.RED);
         return newButton;
     }
+
 }

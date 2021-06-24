@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            navController.navigate(R.id.action_FirstFragment_to_SettingsFragment);
+            navController.navigate(R.id.action_global_SettingsFragment);
             return true;
         }
         return super.onOptionsItemSelected(item);

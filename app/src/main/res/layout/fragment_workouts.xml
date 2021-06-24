@@ -13,7 +13,5 @@
         app:columnCount="3"
         app:rowCount="3"
         app:orientation="horizontal"
-        android:textAlignment="center">
-
-    </androidx.gridlayout.widget.GridLayout>
+        android:textAlignment="center"/>
 </androidx.core.widget.NestedScrollView>

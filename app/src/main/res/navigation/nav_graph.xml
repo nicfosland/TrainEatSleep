@@ -13,7 +13,7 @@
 
         <action
             android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
+            app:destination="@id/CreateWorkoutFragment" />
         <action
             android:id="@+id/action_FirstFragment_to_SettingsFragment"
             app:destination="@id/SettingsFragment" />
@@ -22,10 +22,10 @@
             app:destination="@id/WorkoutsFragment" />
     </fragment>
     <fragment
-        android:id="@+id/SecondFragment"
-        android:name="com.fosland.traineatsleep.SecondFragment"
-        android:label="@string/second_fragment_label"
-        tools:layout="@layout/fragment_second">
+        android:id="@+id/CreateWorkoutFragment"
+        android:name="com.fosland.traineatsleep.CreateWorkoutFragment"
+        android:label="Create Workout Fragment"
+        tools:layout="@layout/fragment_create_workout">
 
         <action
             android:id="@+id/action_SecondFragment_to_FirstFragment"
@@ -50,5 +50,12 @@
             android:id="@+id/action_WorkoutsFragment_pop"
             app:popUpTo="@id/WorkoutsFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_WorkoutsFragment_to_CreateWorkoutFragment"
+            app:destination="@id/CreateWorkoutFragment"
+            app:popUpTo="@id/WorkoutsFragment" />
     </fragment>
+    <action android:id="@+id/action_global_SettingsFragment" app:destination="@id/SettingsFragment"
+        app:enterAnim="@anim/nav_default_enter_anim"
+        app:exitAnim="@anim/nav_default_exit_anim" />
 </navigation>
