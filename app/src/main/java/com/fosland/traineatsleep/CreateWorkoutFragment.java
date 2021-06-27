@@ -1,7 +1,6 @@
 package com.fosland.traineatsleep;
 
 import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
@@ -10,28 +9,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
-
-import androidx.annotation.ColorInt;
-import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
-import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
-
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CreateWorkoutFragment extends Fragment {
     LinearLayout exerciseContainer;
+    HashMap<String, Object> workoutObject = new HashMap<>();
+    HashMap<String, Object> dayObject = new HashMap<>();
 
     @Override
     public View onCreateView(
@@ -41,6 +33,7 @@ public class CreateWorkoutFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_create_workout, container, false);
         // Inflate the layout for this fragment
         exerciseContainer = view.findViewById(R.id.exerciseContainer);
+        workoutObject.put("creatorId", UserSingleton.getGoogleSignInAccount().getId());
         return view;
     }
 
@@ -53,23 +46,34 @@ public class CreateWorkoutFragment extends Fragment {
                 exerciseContainer.addView(makeNewDayCard(getView()));
             }
         });
+
+        view.findViewById(R.id.saveWorkoutButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveWorkout();
+            }
+        });
+    }
+    private void saveWorkout(){
+        workoutObject.put("day", dayObject);
+        Log.d("workoutObject", "hashmap so far: " + workoutObject.toString());
+
     }
 
-    private void updateView(){
+    private void updateView() {
 
     }
 
-    private ViewGroup.LayoutParams params(float weight){
+    private ViewGroup.LayoutParams params(float weight) {
         ViewGroup.LayoutParams param = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
+                0,
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 weight
         );
         return param;
     }
 
-    private MaterialCardView makeNewDayCard(View view){
-
+    private MaterialCardView makeNewDayCard(View view) {
         //Card that contains many layouts
         MaterialCardView newCard = new MaterialCardView(view.getContext());
         newCard.setRadius(50.0f);
@@ -79,29 +83,27 @@ public class CreateWorkoutFragment extends Fragment {
         //Main container within the cardview
         LinearLayout verticalLayout = new LinearLayout(newCard.getContext());
         verticalLayout.setOrientation(LinearLayout.VERTICAL);
-        verticalLayout.setPadding(20,20,20,20);
-
-        //horizontal container within the vertical main container
-        LinearLayout workoutStatsLayout = new LinearLayout(verticalLayout.getContext(),);
-        workoutStatsLayout.setPadding(5,5,5,5);
-        workoutStatsLayout.setOrientation(LinearLayout.HORIZONTAL);
-        workoutStatsLayout.setWeightSum(2f);
-
-        Button testButton = new Button(verticalLayout.getContext());
-        testButton.setText("Test");
-        workoutStatsLayout.addView(testButton, params(1.5f));
+        verticalLayout.setPadding(20, 20, 20, 20);
 
         //EditText layout container
-        TextInputLayout textInputLayout = new TextInputLayout(new ContextThemeWrapper(verticalLayout.getContext(),R.style.Widget_MaterialComponents_TextInputLayout_OutlinedBox));
+        TextInputLayout textInputLayout = new TextInputLayout(new ContextThemeWrapper(verticalLayout.getContext(), R.style.Widget_MaterialComponents_TextInputLayout_OutlinedBox));
         textInputLayout.setHint("Day Name");
         textInputLayout.setHintTextColor(ColorStateList.valueOf(getResources().getColor(R.color.red_700)));
         textInputLayout.setBoxStrokeColor(getResources().getColor(R.color.red_700));
 
+
         //EditText within TextInputLayout
         TextInputEditText textInputEditText = new TextInputEditText(textInputLayout.getContext());
         textInputLayout.addView(textInputEditText);
-        workoutStatsLayout.addView(textInputLayout, params(0.5f));
-        verticalLayout.addView(workoutStatsLayout);
+        dayObject.put("dayName", "");
+        textInputEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                dayObject.replace("dayName", textInputEditText.getText());
+                Log.d("dayName", "onFocusChange: " + dayObject.get("dayName"));
+            }
+        });
+        verticalLayout.addView(textInputLayout);
 
         //Add Exercise Button
         Button addExercise = new Button(verticalLayout.getContext());
@@ -110,6 +112,9 @@ public class CreateWorkoutFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Log.d("newExercise", "onClick: clicked.");
+                verticalLayout.removeView(addExercise);
+                dayObject.put("exercise", makeNewExerciseField(verticalLayout));
+                verticalLayout.addView(addExercise);
             }
         });
         verticalLayout.addView(addExercise);
@@ -119,14 +124,40 @@ public class CreateWorkoutFragment extends Fragment {
         return newCard;
     }
 
-    private CardView makeNewExerciseCard(View view) {
-        CardView newCard = new CardView(view.getContext());
-        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        newCard.setLayoutParams(params);
-        newCard.setBackgroundResource(R.color.red_700);
-        EditText text = new EditText(view.getContext());
-        text.setText("Card #");
-        newCard.addView(text);
-        return newCard;
+    private HashMap<String, Object> makeNewExerciseField(LinearLayout verticalLayout){
+        //needed to store and recreate workouts in database
+        HashMap<String, Object> exerciseObject = new HashMap<>();
+        LinearLayout workoutStats = new LinearLayout(verticalLayout.getContext());
+        workoutStats.setPadding(5, 5, 5, 5);
+        workoutStats.setOrientation(LinearLayout.HORIZONTAL);
+        workoutStats.setWeightSum(6f);
+
+        EditText exerciseName = new EditText(workoutStats.getContext());
+        exerciseName.setLayoutParams(params(3f));
+        exerciseName.setHint("Name");
+        workoutStats.addView(exerciseName);
+        exerciseObject.put("Name", exerciseName.getText());
+
+        EditText exerciseSets = new EditText(workoutStats.getContext());
+        exerciseSets.setLayoutParams(params(1f));
+        exerciseSets.setHint("Sets");
+        workoutStats.addView(exerciseSets);
+        exerciseObject.put("Sets", exerciseSets.getText());
+
+        EditText exerciseReps = new EditText(workoutStats.getContext());
+        exerciseReps.setLayoutParams(params(1f));
+        exerciseReps.setHint("Reps");
+        workoutStats.addView(exerciseReps);
+        exerciseObject.put("Reps", exerciseReps.getText());
+
+        EditText exerciseWeight = new EditText(workoutStats.getContext());
+        exerciseWeight.setLayoutParams(params(1f));
+        exerciseWeight.setHint("Weight");
+        exerciseWeight.setEnabled(false);
+        workoutStats.addView(exerciseWeight);
+        exerciseObject.put("Weight", exerciseWeight.getText());
+
+        verticalLayout.addView(workoutStats);
+        return exerciseObject;
     }
 }
