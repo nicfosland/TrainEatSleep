@@ -67,6 +67,11 @@ public class WorkoutsFragment extends Fragment {
 
     private Button makeWorkoutButton(QueryDocumentSnapshot documentSnapshot) {
         Button newButton = new Button(gridLayout.getContext());
+        try{
+            newButton.setText(documentSnapshot.get("creatorId").toString());
+        } catch (NullPointerException ex){
+
+        }
         newButton.setWidth(gridLayout.getWidth() / 3);
         newButton.setHeight(gridLayout.getWidth() / 3);
         newButton.setHighlightColor(Color.RED);
