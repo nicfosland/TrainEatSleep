@@ -73,7 +73,6 @@ public class FirstFragment extends Fragment {
             public void onClick(View v) {
                 ArrayList<QueryDocumentSnapshot> workoutList = new ArrayList<>();
                 db.collection("workout-programs")
-                        .whereEqualTo("id", UserSingleton.getGoogleSignInAccount().getId())
                         .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {

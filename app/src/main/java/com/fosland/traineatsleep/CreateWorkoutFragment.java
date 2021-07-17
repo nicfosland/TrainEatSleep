@@ -7,12 +7,12 @@ import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.card.MaterialCardView;
@@ -20,15 +20,14 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 public class CreateWorkoutFragment extends Fragment {
     LinearLayout exerciseContainer;
-    HashMap<String, Object> workoutObject = new HashMap<>();
-    ArrayList<HashMap<String, Object>> daysToAddToWorkout = new ArrayList<>();
+    HashMap<String, Object> workoutDoc = new HashMap<>();
+    HashMap<String, Object> workout = new HashMap<>();
+    HashMap<Object, String> previousNames = new HashMap<>();
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -40,8 +39,39 @@ public class CreateWorkoutFragment extends Fragment {
     ) {
         View view = inflater.inflate(R.layout.fragment_create_workout, container, false);
         // Inflate the layout for this fragment
+
+
         exerciseContainer = view.findViewById(R.id.exerciseContainer);
-        workoutObject.put("id", UserSingleton.getGoogleSignInAccount().getId());
+        exerciseContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        workoutDoc.put("id", UserSingleton.getGoogleSignInAccount().getId());
+        workoutDoc.put("workoutId", UUID.randomUUID().toString());
+        TextInputEditText workoutPlanName = view.findViewById(R.id.workoutPlanEditText);
+        workoutPlanName.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        workoutPlanName.setSingleLine();
+//        if (workoutPlanName.getText().toString() != "") {
+        workoutPlanName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!workoutPlanName.getText().toString().isEmpty()) {
+                    Log.d("checking named day", "onFocusChange: " + previousNames.get(v.getContext()));
+
+                    if (previousNames.containsKey(v.getContext())) {
+                        workoutDoc.remove(previousNames.get(v.getContext()));
+                        workoutDoc.put(workoutPlanName.getText().toString(), workout);
+                        previousNames.put(v.getContext(), workoutPlanName.getText().toString());
+                    } else {
+                        workoutDoc.put(workoutPlanName.getText().toString(), workout);
+                        previousNames.put(v.getContext(), workoutPlanName.getText().toString());
+                    }
+                }
+            }
+        });
+//        }
         return view;
     }
 
@@ -63,12 +93,30 @@ public class CreateWorkoutFragment extends Fragment {
         });
     }
 
+
+//    private void buildWorkout() {
+//        HashMap<String, Object> workout = new HashMap<>();
+//        HashMap<String, Object> day = new HashMap<>();
+//        HashMap<String, Object> exercise = new HashMap<>();
+//        workoutDoc.put("Push Pull Legs", workout);
+//
+//        workout.put("Day 1", day);
+//        day.put("Bench Press", exercise);
+//        exercise.put("sets", 4);
+//        exercise.put("reps", 6);
+//
+//        day.put("Pullups", exercise);
+//
+//        db.collection("workout-programs").add(workoutDoc);
+//    }
+
     private void saveWorkout() {
-        for(HashMap<String, Object> day: daysToAddToWorkout){
-            workoutObject.put(day.get("dayId").toString(), day);
-            Log.d("DayAdded", "saveWorkout: added day with id " + day.get("dayId"));
+        Log.d("workout hashmap so far", "saveWorkout: " + workoutDoc);
+        try {
+            db.collection("workout-programs").add(workoutDoc);
+        } catch (IllegalArgumentException ex) {
+            Log.d("IllegalArgumentException", "saveWorkout: " + ex);
         }
-        db.collection("workout-programs").add(workoutObject);
     }
 
     private ViewGroup.LayoutParams params(float weight) {
@@ -82,11 +130,9 @@ public class CreateWorkoutFragment extends Fragment {
 
     private MaterialCardView makeNewDayCard(View view) {
         //Card that contains many layouts
-        HashMap<String, Object> dayObject = new HashMap<String, Object>();
-        dayObject.put("dayId", UUID.randomUUID());
+        HashMap<String, Object> day = new HashMap<>();
         MaterialCardView newCard = new MaterialCardView(view.getContext());
         newCard.setRadius(50.0f);
-
         newCard.setBackgroundResource(R.color.red_700);
 
         //Main container within the cardview
@@ -95,19 +141,33 @@ public class CreateWorkoutFragment extends Fragment {
         verticalLayout.setPadding(20, 20, 20, 20);
 
         //EditText layout container
-        TextInputLayout textInputLayout = new TextInputLayout(new ContextThemeWrapper(verticalLayout.getContext(), R.style.Widget_MaterialComponents_TextInputLayout_OutlinedBox));
-        textInputLayout.setHint("Day Name" + dayObject.get("dayId").toString());
+        TextInputLayout textInputLayout =
+                new TextInputLayout(new ContextThemeWrapper(verticalLayout.getContext(),
+                        R.style.Widget_MaterialComponents_TextInputLayout_OutlinedBox));
         textInputLayout.setHintTextColor(ColorStateList.valueOf(getResources().getColor(R.color.red_700)));
         textInputLayout.setBoxStrokeColor(getResources().getColor(R.color.red_700));
 
 
         //EditText within TextInputLayout
-        TextInputEditText textInputEditText = new TextInputEditText(textInputLayout.getContext());
-        textInputLayout.addView(textInputEditText);
-        textInputEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        TextInputEditText dayName = new TextInputEditText(textInputLayout.getContext());
+
+        dayName.setSingleLine();
+        dayName.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        textInputLayout.addView(dayName);
+        dayName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-
+                if (!dayName.getText().toString().isEmpty()) {
+//                    workout.put(dayName.getText().toString(), day);
+                    if (previousNames.containsKey(v.getContext())) {
+                        workout.remove(previousNames.get(v.getContext()));
+                        workout.put(dayName.getText().toString(), day);
+                        previousNames.put(v.getContext(), dayName.getText().toString());
+                    } else {
+                        workout.put(dayName.getText().toString(), day);
+                        previousNames.put(v.getContext(), dayName.getText().toString());
+                    }
+                }
             }
         });
         verticalLayout.addView(textInputLayout);
@@ -120,69 +180,87 @@ public class CreateWorkoutFragment extends Fragment {
             public void onClick(View v) {
                 Log.d("newExercise", "onClick: clicked.");
                 verticalLayout.removeView(addExercise);
-                HashMap<String, Object> newExerciseField =
-                        makeNewExerciseField(dayObject.get("dayId").toString(), verticalLayout);
-                dayObject.put(newExerciseField.get("Name").toString(), newExerciseField);
+                makeNewExerciseField(verticalLayout, day);
                 verticalLayout.addView(addExercise);
             }
         });
         verticalLayout.addView(addExercise);
         newCard.addView(verticalLayout);
-        daysToAddToWorkout.add(dayObject);
         return newCard;
     }
 
-    private HashMap<String, Object> makeNewExerciseField(String dayId, LinearLayout verticalLayout) {
+    private void makeNewExerciseField(LinearLayout verticalLayout, HashMap<String, Object> dayForExercise) {
         //needed to store and recreate workouts in database
-        HashMap<String, Object> exerciseObject = new HashMap<>();
-        exerciseObject.put("dayId", dayId);
+        HashMap<String, Object> exercise = new HashMap<>();
+
         LinearLayout workoutStats = new LinearLayout(verticalLayout.getContext());
         workoutStats.setPadding(5, 5, 5, 5);
         workoutStats.setOrientation(LinearLayout.HORIZONTAL);
         workoutStats.setWeightSum(6f);
 
         EditText exerciseName = new EditText(workoutStats.getContext());
+        exerciseName.setSingleLine();
+        exerciseName.setImeOptions(EditorInfo.IME_ACTION_DONE);
         exerciseName.setLayoutParams(params(3f));
         exerciseName.setHint("Name");
         exerciseName.setTextColor(getResources().getColor(R.color.white));
         exerciseName.setHintTextColor(getResources().getColor(R.color.white));
         workoutStats.addView(exerciseName);
-        exerciseObject.put("Name", exerciseName.getText());
         exerciseName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                exerciseObject.put("Name", exerciseName.getText());
-                Log.d("exerciseName", "onFocusChange: " + exerciseObject.get("Name").toString());
+                Log.d("exerciseName", "onFocusChange: ");
+                if (!exerciseName.getText().toString().isEmpty()) {
+//                    dayForExercise.put(exerciseName.getText().toString(), exercise);
+                    if (previousNames.containsKey(v.getContext())) {
+                        dayForExercise.remove(previousNames.get(v.getContext()));
+                        dayForExercise.put(exerciseName.getText().toString(), exercise);
+                        previousNames.put(v.getContext(), exerciseName.getText().toString());
+                    } else {
+                        dayForExercise.put(exerciseName.getText().toString(), exercise);
+                        previousNames.put(v.getContext(), exerciseName.getText().toString());
+                    }
+
+                }
             }
         });
 
         EditText exerciseSets = new EditText(workoutStats.getContext());
+        exerciseSets.setSingleLine();
+        exerciseSets.setImeOptions(EditorInfo.IME_ACTION_DONE);
         exerciseSets.setLayoutParams(params(1f));
         exerciseSets.setHint("Sets");
         exerciseSets.setTextColor(getResources().getColor(R.color.white));
         exerciseSets.setHintTextColor(getResources().getColor(R.color.white));
         workoutStats.addView(exerciseSets);
-        exerciseObject.put("Sets", exerciseSets.getText());
         exerciseSets.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                exerciseObject.put("Sets", exerciseName.getText());
-                Log.d("exerciseName", "onFocusChange: " + exerciseObject.get("Sets").toString());
+//                exercise.put("sets", exerciseSets.getText().toString());
+                if (exerciseSets.getText().toString().isEmpty()) {
+                    exercise.put("sets", "Not Set");
+                } else {
+                    exercise.put("sets", exerciseSets.getText().toString());
+                }
             }
         });
 
         EditText exerciseReps = new EditText(workoutStats.getContext());
+        exerciseReps.setSingleLine();
+        exerciseReps.setImeOptions(EditorInfo.IME_ACTION_DONE);
         exerciseReps.setLayoutParams(params(1f));
         exerciseReps.setHint("Reps");
         exerciseReps.setTextColor(getResources().getColor(R.color.white));
         exerciseReps.setHintTextColor(getResources().getColor(R.color.white));
         workoutStats.addView(exerciseReps);
-        exerciseObject.put("Reps", exerciseReps.getText());
         exerciseReps.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                exerciseObject.put("Reps", exerciseName.getText());
-                Log.d("exerciseName", "onFocusChange: " + exerciseObject.get("Reps").toString());
+                if (exerciseReps.getText().toString().isEmpty()) {
+                    exercise.put("reps", "Not Set");
+                } else {
+                    exercise.put("reps", exerciseReps.getText().toString());
+                }
             }
         });
 
@@ -193,17 +271,13 @@ public class CreateWorkoutFragment extends Fragment {
         exerciseWeight.setTextColor(getResources().getColor(R.color.white));
         exerciseWeight.setHintTextColor(getResources().getColor(R.color.white));
         workoutStats.addView(exerciseWeight);
-        exerciseObject.put("Weight", exerciseWeight.getText());
         exerciseWeight.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                exerciseObject.put("Weight", exerciseName.getText());
-                Log.d("exerciseName", "onFocusChange: " + exerciseObject.get("Weight").toString());
+                exercise.put("weight", 0);
             }
         });
 
         verticalLayout.addView(workoutStats);
-
-        return exerciseObject;
     }
 }
