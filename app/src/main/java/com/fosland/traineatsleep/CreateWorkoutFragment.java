@@ -50,6 +50,7 @@ public class CreateWorkoutFragment extends Fragment {
         });
         workoutDoc.put("id", UserSingleton.getGoogleSignInAccount().getId());
         workoutDoc.put("workoutId", UUID.randomUUID().toString());
+        String planNameIdentifier = UUID.randomUUID().toString();
         TextInputEditText workoutPlanName = view.findViewById(R.id.workoutPlanEditText);
         workoutPlanName.setImeOptions(EditorInfo.IME_ACTION_DONE);
         workoutPlanName.setSingleLine();
@@ -60,13 +61,13 @@ public class CreateWorkoutFragment extends Fragment {
                 if (!workoutPlanName.getText().toString().isEmpty()) {
                     Log.d("checking named day", "onFocusChange: " + previousNames.get(v.getContext()));
 
-                    if (previousNames.containsKey(v.getContext())) {
-                        workoutDoc.remove(previousNames.get(v.getContext()));
+                    if (previousNames.containsKey(planNameIdentifier)) {
+                        workoutDoc.remove(previousNames.get(planNameIdentifier));
                         workoutDoc.put(workoutPlanName.getText().toString(), workout);
-                        previousNames.put(v.getContext(), workoutPlanName.getText().toString());
+                        previousNames.put(planNameIdentifier, workoutPlanName.getText().toString());
                     } else {
                         workoutDoc.put(workoutPlanName.getText().toString(), workout);
-                        previousNames.put(v.getContext(), workoutPlanName.getText().toString());
+                        previousNames.put(planNameIdentifier, workoutPlanName.getText().toString());
                     }
                 }
             }
@@ -119,6 +120,7 @@ public class CreateWorkoutFragment extends Fragment {
         }
     }
 
+    @org.jetbrains.annotations.NotNull
     private ViewGroup.LayoutParams params(float weight) {
         ViewGroup.LayoutParams param = new LinearLayout.LayoutParams(
                 0,
@@ -131,6 +133,7 @@ public class CreateWorkoutFragment extends Fragment {
     private MaterialCardView makeNewDayCard(View view) {
         //Card that contains many layouts
         HashMap<String, Object> day = new HashMap<>();
+        String dayNameIdentifier = UUID.randomUUID().toString();
         MaterialCardView newCard = new MaterialCardView(view.getContext());
         newCard.setRadius(50.0f);
         newCard.setBackgroundResource(R.color.red_700);
@@ -159,13 +162,13 @@ public class CreateWorkoutFragment extends Fragment {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!dayName.getText().toString().isEmpty()) {
 //                    workout.put(dayName.getText().toString(), day);
-                    if (previousNames.containsKey(v.getContext())) {
-                        workout.remove(previousNames.get(v.getContext()));
+                    if (previousNames.containsKey(dayNameIdentifier)) {
+                        workout.remove(previousNames.get(dayNameIdentifier));
                         workout.put(dayName.getText().toString(), day);
-                        previousNames.put(v.getContext(), dayName.getText().toString());
+                        previousNames.put(dayNameIdentifier, dayName.getText().toString());
                     } else {
                         workout.put(dayName.getText().toString(), day);
-                        previousNames.put(v.getContext(), dayName.getText().toString());
+                        previousNames.put(dayNameIdentifier, dayName.getText().toString());
                     }
                 }
             }
@@ -192,6 +195,7 @@ public class CreateWorkoutFragment extends Fragment {
     private void makeNewExerciseField(LinearLayout verticalLayout, HashMap<String, Object> dayForExercise) {
         //needed to store and recreate workouts in database
         HashMap<String, Object> exercise = new HashMap<>();
+        String exerciseNameIdentifer = UUID.randomUUID().toString();
 
         LinearLayout workoutStats = new LinearLayout(verticalLayout.getContext());
         workoutStats.setPadding(5, 5, 5, 5);
@@ -212,13 +216,13 @@ public class CreateWorkoutFragment extends Fragment {
                 Log.d("exerciseName", "onFocusChange: ");
                 if (!exerciseName.getText().toString().isEmpty()) {
 //                    dayForExercise.put(exerciseName.getText().toString(), exercise);
-                    if (previousNames.containsKey(v.getContext())) {
-                        dayForExercise.remove(previousNames.get(v.getContext()));
+                    if (previousNames.containsKey(exerciseNameIdentifer)) {
+                        dayForExercise.remove(previousNames.get(exerciseNameIdentifer));
                         dayForExercise.put(exerciseName.getText().toString(), exercise);
-                        previousNames.put(v.getContext(), exerciseName.getText().toString());
+                        previousNames.put(exerciseNameIdentifer, exerciseName.getText().toString());
                     } else {
                         dayForExercise.put(exerciseName.getText().toString(), exercise);
-                        previousNames.put(v.getContext(), exerciseName.getText().toString());
+                        previousNames.put(exerciseNameIdentifer, exerciseName.getText().toString());
                     }
 
                 }

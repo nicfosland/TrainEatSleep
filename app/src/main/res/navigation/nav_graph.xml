@@ -54,8 +54,24 @@
             android:id="@+id/action_WorkoutsFragment_to_CreateWorkoutFragment"
             app:destination="@id/CreateWorkoutFragment"
             app:popUpTo="@id/WorkoutsFragment" />
+        <action
+            android:id="@+id/action_WorkoutsFragment_to_useWorkoutFragment"
+            app:destination="@id/useWorkoutFragment" />
     </fragment>
     <action android:id="@+id/action_global_SettingsFragment" app:destination="@id/SettingsFragment"
         app:enterAnim="@anim/nav_default_enter_anim"
         app:exitAnim="@anim/nav_default_exit_anim" />
+    <fragment
+        android:id="@+id/useWorkoutFragment"
+        android:name="com.fosland.traineatsleep.UseWorkoutFragment"
+        android:label="fragment_use_workout"
+        tools:layout="@layout/fragment_use_workout" >
+        <action
+            android:id="@+id/action_useWorkoutFragment_pop"
+            app:popUpTo="@id/useWorkoutFragment"
+            app:popUpToInclusive="true" />
+        <argument
+            android:name="workoutProgramMap"
+            app:argType="java.util.HashMap" />
+    </fragment>
 </navigation>
