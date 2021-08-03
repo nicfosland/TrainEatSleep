@@ -52,6 +52,7 @@ public class WorkoutsFragment extends Fragment {
                 gridLayout.addView(newWorkoutButton());
             }
         });
+        getActivity().setTitle(R.string.app_name);
 
         return view;
     }
