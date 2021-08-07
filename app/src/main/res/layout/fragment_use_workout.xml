@@ -6,18 +6,9 @@
     tools:context=".UseWorkoutFragment"
     android:orientation="vertical">
 
-    <!-- TODO: Update blank fragment layout -->
-
-<!--    <TextView-->
-<!--        android:id="@+id/workoutName"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="@string/hello_blank_fragment" />-->
-
-    <TextView
-        android:id="@+id/workoutPlanContents"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView" />
-
+    <LinearLayout
+        android:id="@+id/workoutContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"></LinearLayout>
 </LinearLayout>
