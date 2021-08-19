@@ -1,5 +1,6 @@
 package com.fosland.traineatsleep;
 
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.cardview.widget.CardView;
@@ -67,8 +68,10 @@ public class UseWorkoutFragment extends Fragment {
 
     private void makeDay(String dayName, Object dayMap){
         CardView dayCard = new CardView(workoutContainer.getContext());
+        dayCard.setCardBackgroundColor(Color.RED);
         LinearLayout cardLayout = new LinearLayout(dayCard.getContext());
         cardLayout.setOrientation(LinearLayout.VERTICAL);
+        cardLayout.setPadding(5,5,5,5);
         dayCard.addView(cardLayout);
         TextView nameTextView = new TextView(cardLayout.getContext());
         cardLayout.addView(nameTextView);

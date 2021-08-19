@@ -67,7 +67,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleCardView">
+        app:layout_constraintTop_toBottomOf="@+id/weekNameEditText">
 
         <LinearLayout
             android:id="@+id/exerciseContainer"
@@ -98,5 +98,39 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/weekNameEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:ems="10"
+        android:hint="Week Name"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toStartOf="@+id/nextWeek"
+        app:layout_constraintStart_toEndOf="@+id/previousWeek"
+        app:layout_constraintTop_toBottomOf="@+id/titleCardView" />
+
+    <ImageView
+        android:id="@+id/previousWeek"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:src="@android:drawable/arrow_down_float"
+        app:layout_constraintBottom_toBottomOf="@+id/weekNameEditText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/weekNameEditText" />
+
+    <ImageView
+        android:id="@+id/nextWeek"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:src="@android:drawable/arrow_up_float"
+        app:layout_constraintBottom_toBottomOf="@+id/weekNameEditText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/weekNameEditText" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
